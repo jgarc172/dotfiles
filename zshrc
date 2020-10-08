@@ -1,5 +1,5 @@
 # PROMPT
-   #setopt PROMPT_SUBST
+  
   # last command status: √ or exit-code
 exit_stat="%(?.%F{green}√.%F{red}%?)%f"
 
@@ -13,16 +13,14 @@ git_branch() {
       br="$(git branch --show-current)"
       br="(%B%F{cyan}$br%f%b)"
   fi
-  #echo "again"
   echo $br
 }
 
   # prompt characters >> 
 end="%F{magenta}>>%f "
 
-#PROMPT="$exit_stat $last2 $(git_branch) $end"
 precmd() {
-  PROMPT="$exit_stat $last2 $(git_branch) >> "
+  PROMPT="$exit_stat $last2 $(git_branch) $end "
 }
 
 # ALIASES
