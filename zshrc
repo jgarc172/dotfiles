@@ -8,9 +8,8 @@ last2="%B%F{yellow}%2~%f%b"
 
   # git branch
 git_branch() {
-  br=""
-  if [[ -d "./.git" ]]; then
-      br="$(git branch --show-current)"
+  br="$(git branch --show-current 2>/dev/null)"
+  if [[ -n "$br" ]]; then
       br="(%B%F{cyan}$br%f%b)"
   fi
   echo $br
