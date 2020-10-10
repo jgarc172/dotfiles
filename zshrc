@@ -10,7 +10,11 @@ last2="%B%F{yellow}%2~%f%b"
 git_branch() {
   br="$(git branch --show-current 2>/dev/null)"
   if [[ -n "$br" ]]; then
+    if [[ $(git status --porcelain) ]]; then
+      br="(%B%F{red}$br%f%b)"
+    else
       br="(%B%F{cyan}$br%f%b)"
+    fi
   fi
   echo $br
 }
