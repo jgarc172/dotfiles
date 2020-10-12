@@ -21,7 +21,7 @@ git_branch() {
 
 git_status() {
   declare -A hdr
-  untracked=0
+  changed=0
   br=$(git status --branch --porcelain=v2)
   # v2
   # # branch-key value
@@ -34,13 +34,13 @@ git_status() {
     if [[ "$type" == "#" ]]; then
       hdr[$key]=$value
     fi
-    if [[ "$type" == "?" ]]; then
-      untracked=1
+    if [[ "$type" == "?" || "$type" == "1" ]]; then
+      changed=1
     fi
   done <<< "$br"
 
   br="$hdr[branch.head] $hdr[branch.ab]"
-  if [[ "$untracked" -gt 0 ]]; then
+  if [[ "$changed" -gt 0 ]]; then
       br="%B%F{red}$br%f%b"
     else
       br="%B%F{cyan}$br%f%b"
