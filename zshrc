@@ -24,12 +24,15 @@ git_status() {
   changed=0
   br=$(git status --branch --porcelain=v2)
   # v2
+  # type key value
   # # branch-key value
-  # ? modified-file
+  # ? untracked-file
+  # 1 . . . staged-file
   # want:
   # branch.head
   # branch.ab
   # ?
+  # 1
   while read type key value; do
     if [[ "$type" == "#" ]]; then
       hdr[$key]=$value
