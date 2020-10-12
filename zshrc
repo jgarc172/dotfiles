@@ -19,11 +19,43 @@ git_branch() {
   echo $br
 }
 
+git_status() {
+  declare -A hdr
+  br=$(git status --branch --porcelain=v2)
+  # v2
+  # # branch-key value
+  # ? modified-file
+  # want:
+  # branch.head
+  # branch.ab
+  # ?
+  while read type key value; do
+    if [[ "$type" == "#" ]]; then
+      hdr[$key]=$value
+    fi
+    if [[ "$type" == "?" ]]; then
+      untracked=1
+    fi
+  done <<< "$br"
+
+  br="$hdr[branch.head] $hdr[branch.ab]"
+  if [[ $untracked ]]; then
+      br="%B%F{red}$br%f%b"
+    else
+      br="%B%F{cyan}$br%f%b"
+  fi
+  if [[ $br ]]; then
+    br="($br)"
+  fi
+
+  echo "$br"
+}
+
   # prompt characters >> 
-end="%F{magenta}>>%f "
+end="%F{magenta}>>%f"
 
 precmd() {
-  PROMPT="$exit_stat $last2 $(git_branch) $end "
+  PROMPT="$exit_stat $last2 $(git_status) $end "
 }
 
 # ALIASES
