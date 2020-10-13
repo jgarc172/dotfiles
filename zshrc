@@ -42,19 +42,13 @@ git_status() {
     fi
   done <<< "$br"
 
-  #echo "br length ${#br}"
-  #echo "hdr => $hdr"
-  #echo "changed => $changed"
-
   if [[ $hdr[branch.head] ]]; then
-    #echo "has head"
     br="$hdr[branch.head] $hdr[branch.ab]"
   fi
   if [[ "$changed" -gt 0 ]]; then
       br="%B%F{red}$br%f%b"
   fi
   if [[ -n $br ]]; then
-    #echo "$br is ${#br}"
     br="(%B%F{cyan}$br%f%b)"
   fi
 
