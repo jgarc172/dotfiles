@@ -22,7 +22,7 @@ git_branch() {
 git_status() {
   declare -A hdr
   changed=0
-  br=$(git status --branch --porcelain=v2)
+  br=$(git status --branch --porcelain=v2 2>/dev/null)
   # v2
   # type key value
   # # branch-key value
@@ -42,14 +42,20 @@ git_status() {
     fi
   done <<< "$br"
 
-  br="$hdr[branch.head] $hdr[branch.ab]"
+  #echo "br length ${#br}"
+  #echo "hdr => $hdr"
+  #echo "changed => $changed"
+
+  if [[ $hdr[branch.head] ]]; then
+    #echo "has head"
+    br="$hdr[branch.head] $hdr[branch.ab]"
+  fi
   if [[ "$changed" -gt 0 ]]; then
       br="%B%F{red}$br%f%b"
-    else
-      br="%B%F{cyan}$br%f%b"
   fi
-  if [[ $br ]]; then
-    br="($br)"
+  if [[ -n $br ]]; then
+    #echo "$br is ${#br}"
+    br="(%B%F{cyan}$br%f%b)"
   fi
 
   echo "$br"
