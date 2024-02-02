@@ -4,7 +4,7 @@
 exit_stat="%(?.%F{green}√.%F{red}%?)%f"
 
   # last 2 directories in yellow 
-last2="%B%F{yellow}%2~%f%b"
+last1="%B%F{yellow}%1~%f%b"
 
   # git branch
 git_branch() {
@@ -59,7 +59,7 @@ git_status() {
 end="%F{magenta}>>%f"
 
 precmd() {
-  PROMPT="$exit_stat $last2 $(git_status) $end "
+  PROMPT="$exit_stat $last1 $(git_status) $end "
 }
 
 # ALIASES
@@ -78,3 +78,5 @@ alias dn="docker network"
 export CLICOLOR=1
 #LSCOLORS=ExFxBxDxCxegedabagacad
 export LSCOLORS=dxFxCxDxBxegedabagaced
+
+# end
