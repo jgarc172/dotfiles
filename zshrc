@@ -1,7 +1,7 @@
 # PROMPT
   
   # last command status: √ or exit-code
-exit_stat="%(?.%F{green}√.%F{red}%?)%f"
+exit_stat="%(?.%F{green}𝑍.%F{red}%?)%f"
 
   # last 2 directories in yellow 
 last1="%B%F{yellow}%1~%f%b"
@@ -74,7 +74,6 @@ alias dc="docker container"
 alias dn="docker network"
 
 # COLORS
-
 export CLICOLOR=1
 #LSCOLORS=ExFxBxDxCxegedabagacad
 export LSCOLORS=dxFxCxDxBxegedabagaced
