@@ -52,10 +52,10 @@ var start = (styled 'λ ' green)
 var end = (styled ' > ' green)
 
 fn last {|n p|
-  var li = [(splits '/' $p)]
+  var li = [(splits $path:separator $p)]
   var cnt = (count $li)
   if (< $cnt (+ $n 1)) { put $p; return }
-  str:join '/' $li[-$n..]
+  str:join $path:separator $li[-$n..]
 }
 
 fn dir  { 
