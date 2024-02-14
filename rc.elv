@@ -1,9 +1,19 @@
 use path 
 use str
+use platform
 
+set notify-bg-job-success = $false
+set edit:prompt-stale-threshold = .9
+# Aliases
 var sep = $path:separator
 fn splits {|@args| str:split $@args}
+# end Aliases
 
+# Platform dependent functions
+fn gitfetch { if $platform:is-windows {
+    e:pwsh -c Update-GitFetch &
+}}
+# End Platform
 fn last1 {|p|
   put (path:base $p)
 }
@@ -67,6 +77,7 @@ fn dir  {
 }
 
 fn prom {
+  gitfetch
   var cnt = (count (dir)) 
   var gs = (git-status)
   var up = (not (eq $gs ''))
