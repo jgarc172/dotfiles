@@ -1,4 +1,3 @@
-echo "loading module mine"
 use path 
 use str
 
