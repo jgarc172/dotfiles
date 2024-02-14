@@ -2,6 +2,7 @@ echo "loading module mine"
 use path 
 use str
 
+var sep = $path:separator
 fn splits {|@args| str:split $@args}
 
 fn last1 {|p|
@@ -39,7 +40,7 @@ fn git-status {
     var branch = (str:join ' ' $gm[branch.head])
     var ab = (str:join ' ' $gm[branch.ab])
     set git-status = (str:join ' ' [$branch $ab])
-    set git-status = (styled $git-status cyan bold)
+    set git-status = (styled $git-status cyan)
     if $gm[dirty] {
       set git-status = (styled $git-status red bold)
     }
@@ -52,10 +53,10 @@ var start = (styled 'λ ' green)
 var end = (styled ' > ' green)
 
 fn last {|n p|
-  var li = [(splits $path:separator $p)]
+  var li = [(splits $sep $p)]
   var cnt = (count $li)
   if (< $cnt (+ $n 1)) { put $p; return }
-  str:join $path:separator $li[-$n..]
+  str:join $sep $li[-$n..]
 }
 
 fn dir  { 
@@ -63,7 +64,7 @@ fn dir  {
   var first = $abbr[0]
   var last = (last 3 $abbr)
   if (eq $first $last[0]) { put $abbr; return }
-  put $first'../'(last 2 $last) 
+  put $first'..'$sep(last 2 $last) 
 }
 
 fn prom {
@@ -71,7 +72,7 @@ fn prom {
   var gs = (git-status)
   var up = (not (eq $gs ''))
   #if (not (eq $gs '')) { set up = (printf "%"$cnt"s" ' ') }
-  if $up { put (printf "%"$cnt"s" ' ')$gs"\n" }; put $start (styled (dir) yellow bold)' ' $end 
+  if $up { put (printf "%"$cnt"s" ' ')$gs"\n" }; put $start (styled (dir) yellow)' ' $end 
 }
 
 fn rprom {
