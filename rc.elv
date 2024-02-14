@@ -4,15 +4,23 @@ use platform
 
 set notify-bg-job-success = $false
 set edit:prompt-stale-threshold = .9
+var gf-time = (date +%s) # last git fetch
+
 # Aliases
 var sep = $path:separator
 fn splits {|@args| str:split $@args}
 # end Aliases
 
 # Platform dependent functions
-fn gitfetch { if $platform:is-windows {
-    e:pwsh -c Update-GitFetch &
-}}
+fn gitfetch { 
+    if $platform:is-windows {
+      var last-fetch = (- (date +%s) $gf-time)
+      if (> $last-fetch 180) {
+        e:pwsh -c Update-GitFetch &
+        set gf-time = (date +%s)
+      }
+    }
+}
 # End Platform
 fn last1 {|p|
   put (path:base $p)
