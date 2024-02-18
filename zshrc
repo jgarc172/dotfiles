@@ -4,7 +4,7 @@
 exit_stat="%(?.%F{green}𝑍.%F{red}%?)%f"
 
   # last 2 directories in yellow 
-last1="%B%F{yellow}%1~%f%b"
+last2="%B%F{yellow}%2~%f%b"
 
   # git branch
 git_branch() {
@@ -59,7 +59,14 @@ git_status() {
 end="%F{magenta}>>%f"
 
 precmd() {
-  PROMPT="$exit_stat $last1 $(git_status) $end "
+  NEWLINE=$'\n'
+  gs=$(git_status)
+  up=""
+  if [[ ${#gs} -gt 0 ]]; then
+    cnt=$((${#last2} - 5))
+    up="$(printf "%"$cnt"s" ' ')${gs}${NEWLINE}"
+  fi
+  PROMPT="${up}$exit_stat $last2  $end "
 }
 
 # ALIASES
