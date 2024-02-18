@@ -119,11 +119,12 @@ function Split-Path2 {
         [Parameter()]
         [string] $path
     )
+    $sep = [IO.Path]::DirectorySeparatorChar
     $loc = $path
-    $locarr = $path.split('\')
+    $locarr = $path.split($sep)
     if ($locarr.Length -gt 2) {
-        $loc = $path.split('\')[-2..-1] -join '\'
-        $loc = "..\" + $loc + '\'
+        $loc = $path.split($sep)[-2..-1] -join $sep
+        $loc = ".." + $sep + $loc + $sep
     }
     return $loc
 }

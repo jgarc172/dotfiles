@@ -79,3 +79,5 @@ export CLICOLOR=1
 export LSCOLORS=dxFxCxDxBxegedabagaced
 
 # end
+
+eval "$(devbox global shellenv --init-hook)"

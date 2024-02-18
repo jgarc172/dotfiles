@@ -1,3 +1,7 @@
+echo 'in ~/.bashrc '
+eval "$(devbox global shellenv --init-hook)"
+export INPUTRC=~/.inputrc
+
 # bash
 # ALIAS
 alias ll='ls -l'
