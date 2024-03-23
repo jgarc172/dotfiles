@@ -1,7 +1,7 @@
 # PROMPT
   
   # last command status: √ or exit-code
-exit_stat="%(?.%F{green}𝑍.%F{red}%?)%f"
+exit_stat="%(?.%F{green}𝒁.%F{red}%?)%f"
 
   # last 2 directories in yellow 
 last2="%B%F{yellow}%2~%f%b"

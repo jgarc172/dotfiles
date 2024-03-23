@@ -1,6 +1,11 @@
 " settings for Vim
 
 syntax on
+set showmode
+set nohlsearch
+set autoindent
+set tabstop=4
+set expandtab " converts tabs to spaces
 set laststatus=2
 set ruler
 set wrap

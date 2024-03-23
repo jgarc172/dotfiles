@@ -1,6 +1,6 @@
 echo 'in ~/.bashrc '
 eval "$(devbox global shellenv --init-hook)"
-export INPUTRC=~/.inputrc
+#export INPUTRC=~/.inputrc
 
 # bash
 # ALIAS
@@ -18,37 +18,53 @@ export CLICOLOR=1
 #LSCOLORS=ExFxBxDxCxegedabagacad
 export LSCOLORS=dxFxCxDxBxegedabagaced
 
-declare -A colors
-colors["black"]="\e[0;30m"
-colors["red"]="\e[0;31m"
-colors["green"]="\e[0;32m"
-colors["yellow"]="\e[0;33m"
-colors["blue"]="\e[0;34m"
-colors["magenta"]="\e[0;35m"
-colors["cyan"]="\e[0;36m"
-colors["white"]="\e[0;37m"
-
 # EXPORTS
 #export LSCOLORS=AxFxCxDxBxegedabagaced
 ##export PS1="\W\\$ "
 #export GOPATH=$HOME/code/go
 
 # Git branch in prompt.
-parse_git_branch() {
+function parse_git_branch {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
-export PS1=".../\W/\$(parse_git_branch)$ "
+export PS1="𝑩 ../\W/\$(parse_git_branch)$ "
 
+function git-porcelain {
+    git status --branch --porcelain=v2 2>/dev/null
+}
+
+function git-branch {
+  while read type key value; do
+    [[ $type = "#" ]] && printf "%s %s\n" "$key" "$value"
+    [[ "?1" =~ "$type" ]] && printf "%s\n" "dirty" && break 
+  done
+}
+
+function git-status {
+  while read key value; do
+    [[ "$key" = "branch.head" ]] && status=$value
+    [[ "$key" = "branch.ab" ]] && status+=" $value"
+    [[ "$key" = "dirty" ]] && status+=" $key"
+  done
+  printf "%s" "$status"
+}
+
+function format-git {
+  status="${@:1:3}"
+  [[ -n "$4" ]] && status+=" red"
+  printf "%s " $status
+}
 # end bash
 
 # from zshrc
 
 # PROMPT
-git_status() {
-  declare -A hdr
-  changed=0
-  br=$(git status --branch --porcelain=v2 2>/dev/null)
+function git_status {
+  local result=$1
+  declare -A git
+  git["changed"]=""
+  gp=$(git status --branch --porcelain=v2 2>/dev/null)
   # v2
   # type key value
   # # branch-key value
@@ -60,25 +76,34 @@ git_status() {
   # ?
   # 1
   while read type key value; do
+    echo $type
     if [[ "$type" == "#" ]]; then
-      hdr[$key]=$value
+      git[$key]=$value
+      echo $key ${git[$key]}
     fi
     if [[ "$type" == "?" || "$type" == "1" ]]; then
-      changed=1
+      echo $type changed
+      git["changed"]=1
+      echo changed ${git["changed"]}
     fi
-  done <<< "$br"
+  done <<< "$gp"
 
-  if [[ $hdr[branch.head] ]]; then
-    br="$hdr[branch.head] $hdr[branch.ab]"
-  fi
-  if [[ "$changed" -gt 0 ]]; then
-      br="%B%F{red}$br%f%b"
-  fi
-  if [[ -n $br ]]; then
-    br="(%B%F{cyan}$br%f%b)"
-  fi
-
-  echo "$br"
+  eval "$result=(${git[@]})"
 }
 
+function gs {
+  gm=()
+  git_status gm
+  status=""
+  if [[ $gm[branch.head] ]]; then
+    status="${gm[branch.head]} ${gm[branch.ab]}"
+  fi
+  if [[ -n $status ]]; then
+    status="(%B%F{cyan}$status%f%b)"
+  fi
+  if [[ -n $gm["changed"] ]]; then
+      status="%B%F{red}$status%f%b"
+  fi
+  echo $status
+}
 # end zshrc

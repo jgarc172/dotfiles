@@ -76,7 +76,7 @@ function prompt {
     if (($prompt3.Length -gt 0)) {
         Write-Host "$(" ".PadRight($prompt2.Length - 10))$(Get-Prompt3)"
     }
-    "$(Get-Prompt1 ">_" $lastError) $(Get-Prompt2) > "
+    "$(Get-Prompt1 "≥" $lastError) $(Get-Prompt2) > "
 }
 
 # Remove-LastHistory removes the last item in the history
