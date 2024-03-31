@@ -13,22 +13,10 @@ alias di="docker image"
 alias dc="docker container"
 alias dn="docker network"
 
-# COLORS
-export CLICOLOR=1
-#LSCOLORS=ExFxBxDxCxegedabagacad
-export LSCOLORS=dxFxCxDxBxegedabagaced
-
-# EXPORTS
-#export LSCOLORS=AxFxCxDxBxegedabagaced
-##export PS1="\W\\$ "
-#export GOPATH=$HOME/code/go
-
 # Git branch in prompt.
 function parse_git_branch {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
-
-export PS1="𝑩 ../\W/\$(parse_git_branch)$ "
 
 function git-porcelain {
     git status --branch --porcelain=v2 2>/dev/null
@@ -52,7 +40,10 @@ function git-status {
 
 function format-git {
   status="${@:1:3}"
-  [[ -n "$4" ]] && status+=" red"
+  dirty=$4
+  color="cyan"
+  [[ -n "$dirty" ]] && color="red"
+  status=$(color "$status" $color)
   printf "%s " $status
 }
 # end bash
@@ -106,4 +97,35 @@ function gs {
   fi
   echo $status
 }
+
+function color {
+  local string=$1
+  local color=$2
+  local reset="\e[0m"
+  local code="\e[39m"
+
+  case ${color} in
+    red)
+      code="\e[31m";;
+    cyan)
+      code="\e[36m";;
+    *)
+      code=$code;;
+  esac
+  printf "%s" "${code}${string}${reset}"
+}
 # end zshrc
+
+# EXPORTS
+#export LSCOLORS=AxFxCxDxBxegedabagaced
+##export PS1="\W\\$ "
+#export GOPATH=$HOME/code/go
+
+# COLORS
+export CLICOLOR=1
+#LSCOLORS=ExFxBxDxCxegedabagacad
+export LSCOLORS=dxFxCxDxBxegedabagaced
+
+#export PS1="𝑩 ../\W/\$(parse_git_branch)$ "
+status=$(git-porcelain | git-branch | git-status)
+export PS1="𝑩 ../\W/ (\$(echo -e $(format-git $status)))$ "
