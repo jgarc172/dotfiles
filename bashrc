@@ -30,6 +30,7 @@ function git-branch {
 }
 
 function git-status {
+  local status
   while read key value; do
     [[ "$key" = "branch.head" ]] && status=$value
     [[ "$key" = "branch.ab" ]] && status+=" $value"
@@ -44,58 +45,7 @@ function format-git {
   color="cyan"
   [[ -n "$dirty" ]] && color="red"
   status=$(color "$status" $color)
-  printf "%s " $status
-}
-# end bash
-
-# from zshrc
-
-# PROMPT
-function git_status {
-  local result=$1
-  declare -A git
-  git["changed"]=""
-  gp=$(git status --branch --porcelain=v2 2>/dev/null)
-  # v2
-  # type key value
-  # # branch-key value
-  # ? untracked-file
-  # 1 . . . staged-file
-  # want:
-  # branch.head
-  # branch.ab
-  # ?
-  # 1
-  while read type key value; do
-    echo $type
-    if [[ "$type" == "#" ]]; then
-      git[$key]=$value
-      echo $key ${git[$key]}
-    fi
-    if [[ "$type" == "?" || "$type" == "1" ]]; then
-      echo $type changed
-      git["changed"]=1
-      echo changed ${git["changed"]}
-    fi
-  done <<< "$gp"
-
-  eval "$result=(${git[@]})"
-}
-
-function gs {
-  gm=()
-  git_status gm
-  status=""
-  if [[ $gm[branch.head] ]]; then
-    status="${gm[branch.head]} ${gm[branch.ab]}"
-  fi
-  if [[ -n $status ]]; then
-    status="(%B%F{cyan}$status%f%b)"
-  fi
-  if [[ -n $gm["changed"] ]]; then
-      status="%B%F{red}$status%f%b"
-  fi
-  echo $status
+  printf "%s" "$status"
 }
 
 function color {
@@ -112,9 +62,12 @@ function color {
     *)
       code=$code;;
   esac
-  printf "%s" "${code}${string}${reset}"
+  printf "%s" "\[${code}\]${string}\[${reset}\]"
 }
-# end zshrc
+
+function branch-status {
+  git-porcelain | git-branch | git-status
+}
 
 # EXPORTS
 #export LSCOLORS=AxFxCxDxBxegedabagaced
@@ -126,6 +79,16 @@ export CLICOLOR=1
 #LSCOLORS=ExFxBxDxCxegedabagacad
 export LSCOLORS=dxFxCxDxBxegedabagaced
 
+function prompt {
+  stat=$(branch-status)
+  if [[ "$stat" ]]; then
+    stat="($(format-git $stat))"
+    stat="           ${stat}\n"
+  fi
+  PS1="${stat}𝑩 ../\W/ $ "
+}
+
 #export PS1="𝑩 ../\W/\$(parse_git_branch)$ "
-status=$(git-porcelain | git-branch | git-status)
-export PS1="𝑩 ../\W/ (\$(echo -e $(format-git $status)))$ "
+#export PS1="𝑩 ../\W/ \$(echo -e \$(prompt-status))$ "
+#export PS1="$(prompt-status)𝑩 ../\W/ $ "
+PROMPT_COMMAND=prompt
